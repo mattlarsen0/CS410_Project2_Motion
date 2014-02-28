@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="detect.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="track.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

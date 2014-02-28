@@ -21,5 +21,8 @@
     <ClCompile Include="detect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="track.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
