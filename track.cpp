@@ -14,7 +14,7 @@ void track(std::string filename)
 	int amount = 0;
 	int noObjectFrames = 0;
 
-	std::vector<uchar> status;
+	std::vector<uchar> status; //status of points from lucas kanade, set to 1 if feature was tracked
 	std::vector<float> err;
 	std::vector<cv::Point2f> prevPoints; //points for the previous frame
 	std::vector<cv::Point2f> currPoints; //points for the current frame
@@ -42,10 +42,6 @@ void track(std::string filename)
 		return;
 	}
 
-	cv::VideoWriter outputVideo;
-	cv::Size S = cv::Size((int) vid.get(CV_CAP_PROP_FRAME_WIDTH),    //Acquire input size
-              (int) vid.get(CV_CAP_PROP_FRAME_HEIGHT));
-	outputVideo.open("result.avi" , -1, vid.get(CV_CAP_PROP_FPS),S, true);
 	std::cout << "Learning background...\n";
 
 	//learn the background
@@ -54,7 +50,7 @@ void track(std::string filename)
 		vid.read(currFrame);
 		cv::cvtColor(currFrame, currFrame, CV_RGB2GRAY);	
 		cv::blur(currFrame, currFrame, cv::Size(9,9));
-		subtractor.operator()(currFrame, mask,0.1);
+		subtractor.operator()(currFrame, mask,0.01);
 	}
 	std::cout << "Finished background learning, init first frame...\n";
 
@@ -71,11 +67,6 @@ void track(std::string filename)
 
 	FreeConsole();
 
-	for(int i = 0; i < 66; i++)
-	{
-		vid.read(currFrame);
-	}
-	
 	//Main loop
 	while(vid.read(currFrame))
 	{
@@ -116,7 +107,6 @@ void track(std::string filename)
 					if(amount == 2) //when we find 2 points inside the object
 					{
 						goodContours.push_back(contours[i]);
-					
 					}
 					
 					circle(currFrame, currPoints[j], 3, cv::Scalar(0,255,0)); //mark the point
@@ -150,7 +140,7 @@ void track(std::string filename)
 					cv::goodFeaturesToTrack(temp, newPoints, 10, 0.01, 3, featureMask);
 				}
 			}
-			catch(cv::Exception& e) 
+			catch(cv::Exception e) 
 			{
 				//don't detect points, object near edge. 
 			}
@@ -177,6 +167,7 @@ void track(std::string filename)
 		{
 			cv::goodFeaturesToTrack(temp, currPoints, 500, 0.01, 3);
 			noObjectFrames = 0;
+			frameCount = 0;
 		}
 
 		//cleanup
@@ -184,7 +175,6 @@ void track(std::string filename)
 		goodContours.clear();
 		prevPoints = currPoints;
 		prevFrame = temp.clone();
-		outputVideo.write(currFrame);
 		cv::imshow("Result", currFrame);
 		cv::waitKey(1);
 	}	
