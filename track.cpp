@@ -10,6 +10,7 @@ void track(std::string filename)
 {
 	cv::VideoCapture vid;
 
+	char exitKey = '0';
 	int frameCount = 0;
 	int amount = 0;
 	int noObjectFrames = 0;
@@ -39,6 +40,10 @@ void track(std::string filename)
 		
 	if(!vid.open(filename))
 	{
+		std::cout << "\nERROR. Failed to load video file." << std::endl;
+		std::cout << "Make sure video codecs are installed." << std::endl;
+		std::cout << "Hit Enter to exit.";
+		std::cin.ignore();
 		return;
 	}
 
@@ -176,6 +181,10 @@ void track(std::string filename)
 		prevPoints = currPoints;
 		prevFrame = temp.clone();
 		cv::imshow("Result", currFrame);
-		cv::waitKey(1);
+		exitKey = cv::waitKey(1);
+		if(exitKey == 'q' || exitKey == 'Q')
+		{
+			return;
+		}
 	}	
 }

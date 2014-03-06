@@ -2,15 +2,16 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/video/background_segm.hpp>
 #include <opencv2/video/video.hpp>
+#include <iostream>
 #include <Windows.h>
 
 void detect(std::string filename)
 {
+	char exitKey = '0';
 	cv::VideoCapture vid;
 	cv::Mat prevFrame;
 	cv::Mat currFrame;
 	std::vector<std::vector<cv::Point>> contours;
-	cv::BackgroundSubtractorMOG2 subtractor(0, 12, false);
 	cv::Scalar color = cv::Scalar(0,255,0);
 	cv::Mat mask; //Mask results from MOG2 subtraction
 	cv::Mat temp; //Temp image for manipulation of current frame
@@ -18,21 +19,37 @@ void detect(std::string filename)
 	
 	if(!vid.open(filename))
 	{
+		std::cout << "\nERROR. Failed to load video file." << std::endl;
+		std::cout << "Make sure video codecs are installed." << std::endl;
+		std::cout << "Hit Enter to exit.";
+		std::cin.ignore();
 		return;
 	}
 
 	FreeConsole();
 
+	//prep first frame
+	vid.read(prevFrame);
+	cv::cvtColor(prevFrame, prevFrame, CV_RGB2GRAY);	
+	cv::blur(prevFrame, prevFrame, cv::Size(9,9));
+
 	while(vid.read(currFrame) == true)
 	{
 		temp = currFrame.clone();
+		cv::cvtColor(temp, temp, CV_RGB2GRAY);	
 		cv::blur(temp, temp, cv::Size(9,9));
-
-		subtractor.operator()(temp, mask);
-		cv::imshow("Background Subtraction", mask);
-		cv::erode(mask,mask, cv::Mat());
-		cv::dilate(mask, mask, cv::Mat());
 		
+		//take difference between frames to see motion
+		cv::absdiff(temp, prevFrame, mask);
+		prevFrame = temp.clone();
+
+		//make motion visible
+		cv::threshold(mask, mask, 2, 255, CV_THRESH_BINARY);
+
+		//cleanup edges
+		cv::erode(mask, mask, cv::Mat());
+		cv::dilate(mask, mask, cv::Mat());
+
 		cv::findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
 		//Draw rectangles
@@ -45,7 +62,13 @@ void detect(std::string filename)
 			}
 		}
 
+
+		cv::imshow("Background Subtraction", mask);
 		cv::imshow("Result", currFrame);
-		cv::waitKey(1);
+		exitKey = cv::waitKey(1);
+		if(exitKey == 'q' || exitKey == 'Q')
+		{
+			return;
+		}
 	}
 }

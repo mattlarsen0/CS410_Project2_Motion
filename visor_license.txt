@@ -1,0 +1,5 @@
+R. Vezzani, R. Cucchiara,
+"Video Surveillance Online Repository (ViSOR): an integrated framework"
+in Multimedia Tools and Applications, vol. 50, n. 2, Kluwer Academic Press, pp. 359-380, 2010
+
+Video URL: http://imagelab.ing.unimore.it/visor/video_details.asp?idvideo=195
