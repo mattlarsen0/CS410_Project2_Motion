@@ -1,7 +1,6 @@
 #CS410 Project 2 - Motion and Tracking
 
-####Download
-https://docs.google.com/uc?export=download&id=0B0qFZqkybmuiLUhTTExrYTlQRjg
+<b>Download:</b> https://docs.google.com/uc?export=download&id=0B0qFZqkybmuiLUhTTExrYTlQRjg
 
 This project has two parts:
 
