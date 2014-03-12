@@ -68,8 +68,7 @@ void track(std::string filename)
 	//detect features 
 	std::cout << "Detecting features...\n";
 	cv::goodFeaturesToTrack(prevFrame, prevPoints, 500, 0.01, 3);
-	cv::cornerSubPix(prevFrame, prevPoints, winSize, zeroZone, termcrit);
-
+	
 	FreeConsole();
 
 	//Main loop
